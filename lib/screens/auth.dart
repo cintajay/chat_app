@@ -15,7 +15,11 @@ class _AuthScreenState extends State<AuthScreen> {
   String? _enteredPassword;
 
   void _submit() {
-    _formKey.currentState!.validate();
+    final isValid = _formKey.currentState!.validate();
+
+      if (isValid) {
+        _formKey.currentState!.save();
+      }
   }
 
   @override
@@ -60,6 +64,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         }
                         return null;
                       },
+                      onSaved: (value) {
+                        _enteredEmail = value!;
+                      },
                     ),
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Username'),
@@ -72,6 +79,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         }
                         return null;
                       },
+                      onSaved: (value) {
+                        _enteredUsername = value!;
+                      },
                     ),
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Password'),
@@ -81,6 +91,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           return 'Password must be at least 6 characters long.';
                         }
                         return null;
+                      },
+                      onSaved: (value) {
+                        _enteredPassword = value!;
                       },
                     ),
                     SizedBox(height: 20,),
