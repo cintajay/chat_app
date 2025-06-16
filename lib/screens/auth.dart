@@ -28,17 +28,16 @@ class _AuthScreenState extends State<AuthScreen> {
 
     _formKey.currentState!.save();
 
-    if (_isLogin) {
-
-    } else {
-      try {
+    try {
+      if (_isLogin) {
+        final userCredential = await _firebase.signInWithEmailAndPassword(email: _enteredEmail!, password: _enteredPassword!);
+      } else {
         final userCredential = await _firebase.createUserWithEmailAndPassword(email: _enteredEmail!, password: _enteredPassword!);
-        print(userCredential);
-      } on FirebaseAuthException catch (error) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message ?? 'Authentication failed')));
       }
-    }      
+    } on FirebaseAuthException catch (error) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.message ?? 'Authentication failed')));
+    }     
   }
 
   @override
@@ -66,7 +65,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Column(
                   //crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CircleAvatar(radius: 40,),
+                    if (!_isLogin) 
+                      CircleAvatar(radius: 40,),
+                    if (!_isLogin)
                     TextButton.icon(onPressed: () {}, label: Text('Add Image'), icon: Icon(Icons.photo),),
                     TextFormField(
                       decoration: const InputDecoration(
@@ -87,21 +88,22 @@ class _AuthScreenState extends State<AuthScreen> {
                         _enteredEmail = value!;
                       },
                     ),
-                    TextFormField(
-                      decoration: const InputDecoration(labelText: 'Username'),
-                      enableSuggestions: false,
-                      validator: (value) {
-                        if (value == null ||
-                            value.trim().isEmpty ||
-                            value.trim().length < 4) {
-                          return 'Please enter at least 4 characters.';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _enteredUsername = value!;
-                      },
-                    ),
+                    if (!_isLogin) 
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Username'),
+                        enableSuggestions: false,
+                        validator: (value) {
+                          if (value == null ||
+                              value.trim().isEmpty ||
+                              value.trim().length < 4) {
+                            return 'Please enter at least 4 characters.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _enteredUsername = value!;
+                        },
+                      ),
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Password'),
                       obscureText: true,
@@ -117,8 +119,11 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     SizedBox(height: 20,),
                     ElevatedButton(onPressed: _submit, child: Text('Sign Up'),),
-                    TextButton(onPressed: () {}, child: Text('I already have an account')),
-                    SizedBox(height: 20,)
+                    TextButton(onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    }, child: Text(_isLogin ? 'Create a new account' : 'I already have an account')),
                   ],
                 ),
               ),
