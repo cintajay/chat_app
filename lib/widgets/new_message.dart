@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
@@ -16,7 +18,7 @@ class _NewMessageState extends State<NewMessage> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit() async {
     final enteredMessage = _textFieldController.text;
     if (enteredMessage.trim().isEmpty) {
       return;
@@ -24,6 +26,19 @@ class _NewMessageState extends State<NewMessage> {
 
     _textFieldController.clear();
     FocusScope.of(context).unfocus();
+
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData = await FirebaseFirestore.instance //can store the required data locally instead of this approach
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    FirebaseFirestore.instance.collection("chat").add({
+      'id': user.uid,
+      'message': enteredMessage,
+      'username': userData.data()!['username']
+    });
+    
   }
 
 
