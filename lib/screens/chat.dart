@@ -1,3 +1,4 @@
+import 'package:chat_app/widgets/new_message.dart';
 import 'package:chat_app/widgets/receiver_chat_bubble.dart';
 import 'package:chat_app/widgets/sender_chat_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,20 +36,7 @@ class ChatScreen extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Row(
-              children: [
-                SizedBox(width: 12,),
-                Expanded(child: TextField(decoration: InputDecoration(label: Text("Send a message")),)),   
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.send),
-                  color: Theme.of(context).primaryColor,
-                )             
-              ]
-            ),
-          )
+          NewMessage()
         ],
       )
     );
