@@ -3,10 +3,29 @@ import 'package:chat_app/widgets/receiver_chat_bubble.dart';
 import 'package:chat_app/widgets/sender_chat_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+
+  void _setupPushNotifications() async {
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    fcm.subscribeToTopic("chat");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setupPushNotifications();
+  }
 
   @override
   Widget build(BuildContext context) {
