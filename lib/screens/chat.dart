@@ -26,7 +26,11 @@ class ChatScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          StreamBuilder(stream: FirebaseFirestore.instance.collection('chat').snapshots(), builder: (context, snapshot) {
+          StreamBuilder(stream: FirebaseFirestore.instance
+              .collection('chat')
+              .orderBy('timestamp', descending: true)
+              .snapshots(), 
+            builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator(),);
               }
