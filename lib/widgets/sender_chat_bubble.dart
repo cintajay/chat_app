@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SenderChatBubble extends StatelessWidget {
-  const SenderChatBubble({super.key, required this.message, required this.username});
+  const SenderChatBubble({super.key, required this.message, required this.username, required this.isSame});
 
   final String message;
   final String username;
+  final bool isSame;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class SenderChatBubble extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(username,
+            isSame? SizedBox(height: 8,) : Text(username,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -24,7 +25,13 @@ class SenderChatBubble extends StatelessWidget {
             Card(
               margin: EdgeInsets.zero,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.only(topStart: Radius.circular(12), bottomEnd: Radius.circular(12), bottomStart: Radius.circular(12))),
+              shape: RoundedRectangleBorder(
+                borderRadius: isSame? BorderRadius.all(Radius.circular(12)) : BorderRadiusDirectional.only(
+                  topStart: Radius.circular(12),
+                  bottomEnd: Radius.circular(12),
+                  bottomStart: Radius.circular(12),
+                ),
+              ),
               color: Colors.grey[300],
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -36,7 +43,7 @@ class SenderChatBubble extends StatelessWidget {
           ],
         ),
         SizedBox(width: 8,),
-        CircleAvatar(radius: 20, child: Icon(Icons.person)),
+        isSame? SizedBox(width: 40,) : CircleAvatar(radius: 20, child: Icon(Icons.person)),
       ],
     );
   }

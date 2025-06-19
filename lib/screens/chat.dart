@@ -50,11 +50,14 @@ class ChatScreen extends StatelessWidget {
                     final id = loadedMessages[index]['id'] as String;
                     final message = loadedMessages[index]['message'] as String;
                     final username = loadedMessages[index]['username'] as String;
+
+                    final String? nextId = index+1 < loadedMessages.length ? loadedMessages[index+1]['id'] : null;
+                    //index 0 is the latest message, index 0's UI depends on the prev id which is index 1
                     
                     if (id == FirebaseAuth.instance.currentUser!.uid) {
-                      return SenderChatBubble(message: message, username: username,);
+                      return SenderChatBubble(message: message, username: username, isSame: nextId == id ? true : false,);
                     } else {
-                      return RecieverChatBubble(message: message, username: username,);
+                      return RecieverChatBubble(message: message, username: username, isSame: nextId == id ? true : false,);
                     }
                   },
                 );
