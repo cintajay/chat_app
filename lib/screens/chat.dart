@@ -26,23 +26,23 @@ class ChatScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          StreamBuilder(stream: FirebaseFirestore.instance
-              .collection('chat')
-              .orderBy('timestamp', descending: true)
-              .snapshots(), 
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator(),);
-              }
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(child: Text("No messages found"),);
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text("Something went wrong..."),);
-              }
-              final loadedMessages = snapshot.data!.docs;
-              return Expanded(
-                child: ListView.builder(
+          Expanded(
+            child: StreamBuilder(stream: FirebaseFirestore.instance
+                .collection('chat')
+                .orderBy('timestamp', descending: true)
+                .snapshots(), 
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator(),);
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("No messages found"),);
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text("Something went wrong..."),);
+                }
+                final loadedMessages = snapshot.data!.docs;
+                return ListView.builder(
                   padding: EdgeInsets.all(12),
                   reverse: true,
                   itemCount: loadedMessages.length,
@@ -57,9 +57,9 @@ class ChatScreen extends StatelessWidget {
                       return RecieverChatBubble(message: message, username: username,);
                     }
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),         
           NewMessage()
         ],
