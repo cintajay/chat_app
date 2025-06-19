@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class RecieverChatBubble extends StatelessWidget {
-  const RecieverChatBubble({super.key});
+  const RecieverChatBubble({super.key, required this.message, required this.username});
+
+  final String message;
+  final String username;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,7 @@ class RecieverChatBubble extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Name",
+            Text(username,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -27,7 +30,7 @@ class RecieverChatBubble extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary.withAlpha(200),
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Text("Message",
+                child: Text(message,
                   style: TextStyle(height: 1.3, color: Colors.black87),
                 ),
               ),

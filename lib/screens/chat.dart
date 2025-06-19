@@ -1,6 +1,7 @@
 import 'package:chat_app/widgets/new_message.dart';
 import 'package:chat_app/widgets/receiver_chat_bubble.dart';
 import 'package:chat_app/widgets/sender_chat_bubble.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -25,17 +26,37 @@ class ChatScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(12),
-              reverse: true,
-              itemCount: 2,
-              itemBuilder: (ctx, index) {
-                if (index == 0) {return SenderChatBubble();}
-                else {return RecieverChatBubble();}
-              },
-            ),
-          ),
+          StreamBuilder(stream: FirebaseFirestore.instance.collection('chat').snapshots(), builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator(),);
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text("No messages found"),);
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text("Something went wrong..."),);
+              }
+              final loadedMessages = snapshot.data!.docs;
+              return Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(12),
+                  reverse: true,
+                  itemCount: loadedMessages.length,
+                  itemBuilder: (ctx, index) {
+                    final id = loadedMessages[index]['id'] as String;
+                    final message = loadedMessages[index]['message'] as String;
+                    final username = loadedMessages[index]['username'] as String;
+                    
+                    if (id == FirebaseAuth.instance.currentUser!.uid) {
+                      return SenderChatBubble(message: message, username: username,);
+                    } else {
+                      return RecieverChatBubble(message: message, username: username,);
+                    }
+                  },
+                ),
+              );
+            },
+          ),         
           NewMessage()
         ],
       )
